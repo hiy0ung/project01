@@ -1,11 +1,9 @@
 package org.example.springbootpractice.repository;
 
-import org.example.springbootpractice.entity.MenuOption;
+import org.example.springbootpractice.entity.MenuOptionGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface MenuOptionRepository extends JpaRepository<MenuOption, Long> {
+public interface MenuOptionGroupRepository extends JpaRepository<MenuOptionGroup, Long> {
 }

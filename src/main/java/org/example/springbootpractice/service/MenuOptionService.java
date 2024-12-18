@@ -9,10 +9,6 @@ import java.util.List;
 public interface MenuOptionService {
     ResponseDto<MenuOptionResponseDto> addMenuOption(MenuOptionRequestDto dto);
 
-    ResponseDto<List<MenuOptionResponseDto>> getAllMenuOptions();
-
-    ResponseDto<MenuOptionResponseDto> getMenuOptionById(Long id);
-
     ResponseDto<MenuOptionResponseDto> updateMenuOption(MenuOptionRequestDto dto, Long id);
 
     ResponseDto<Void> deleteMenuOption(Long id);

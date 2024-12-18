@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class MenuOptionDetailAllResponseDto {
+public class MenuOptionDetailGetResponseDto {
     private Long detailId;
     private String optionDetailName;
     private Integer addtionalFee;

@@ -20,33 +20,13 @@ public class MenuOptionController {
     private final MenuOptionService menuOptionService;
 
     public static final String OPTION_POST_ADD = "/add";
-    public static final String OPTION_GET_LIST = "/";
-    public static final String OPTION_GET_ID = "/{id}";
     public static final String OPTION_PUT_ID = "/{id}";
     public static final String OPTION_DELETE_ID = "/{id}";
-
-
 
     // 추가
     @PostMapping(OPTION_POST_ADD)
     public ResponseEntity<ResponseDto<MenuOptionResponseDto>> addMenuOption(@RequestBody MenuOptionRequestDto dto) {
         ResponseDto<MenuOptionResponseDto> response = menuOptionService.addMenuOption(dto);
-        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
-        return ResponseEntity.status(status).body(response);
-    }
-
-    // 전체 조희
-    @GetMapping(OPTION_GET_LIST)
-    public ResponseEntity<ResponseDto<List<MenuOptionResponseDto>>> getAllMenuOptions() {
-        ResponseDto<List<MenuOptionResponseDto>> response = menuOptionService.getAllMenuOptions();
-        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
-        return ResponseEntity.status(status).body(response);
-    }
-
-    // 단건 조회
-    @GetMapping(OPTION_GET_ID)
-    public ResponseEntity<ResponseDto<MenuOptionResponseDto>> getMenuOptionById(@PathVariable Long id) {
-        ResponseDto<MenuOptionResponseDto> response = menuOptionService.getMenuOptionById(id);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }

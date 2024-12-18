@@ -3,10 +3,10 @@ import org.example.springbootpractice.entity.Menu;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long> {
@@ -69,5 +69,5 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
         ORDER BY
             m.id, mo.id, md.id;
 """, nativeQuery = true)
-    List<Object[]> findMenuWithCategoryAndOptionByMenuId(Long menuId);
+    List<Object[]> findMenuWithCategoryAndOptionByMenuId(@Param("menuId") Long id);
 }

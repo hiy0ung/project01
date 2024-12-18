@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -56,32 +55,32 @@ public class MenuServiceImpl implements MenuService {
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
 
-    public ResponseDto<List<MenuAllResponseDto>> getAllMenus() {
-        List<MenuAllResponseDto> resultList = null;
+    public ResponseDto<List<MenuGetResponseDto>> getAllMenus() {
+        List<MenuGetResponseDto> data = null;
 
         try {
-            resultList = menuRepository.findAllMenuWithCategoryAndOption().stream().collect(Collectors.groupingBy(
+            data = menuRepository.findAllMenuWithCategoryAndOption().stream().collect(Collectors.groupingBy(
                     a -> (Long) a[0],
                 Collectors.collectingAndThen(
                         Collectors.toList(),
                         b -> {
-                            List<MenuOptionAllResponseDto> optionAllResponseDtos = b.stream().collect(Collectors.groupingBy(
+                            List<MenuOptionGetResponseDto> optionAllResponseDtos = b.stream().collect(Collectors.groupingBy(
                                     c -> (Long) c[7],
                                     Collectors.collectingAndThen(
                                             Collectors.toList(),
                                             d -> {
-                                                List<MenuOptionDetailAllResponseDto> optionDetailAllResponseDtos = d.stream().collect(Collectors.groupingBy(
+                                                List<MenuOptionDetailGetResponseDto> optionDetailAllResponseDtos = d.stream().collect(Collectors.groupingBy(
                                                         e -> (Long) e[9],
                                                         Collectors.collectingAndThen(
                                                                 Collectors.toList(),
-                                                                f -> new MenuOptionDetailAllResponseDto((Long)f.get(0)[9], (String)f.get(0)[10], (Integer)f.get(0)[11])
+                                                                f -> new MenuOptionDetailGetResponseDto((Long)f.get(0)[9], (String)f.get(0)[10], (Integer)f.get(0)[11])
                                                         )
                                                 )).values().stream().collect(Collectors.toList());
-                                                return new MenuOptionAllResponseDto((Long)d.get(0)[7], (String)d.get(0)[8], optionDetailAllResponseDtos);
+                                                return new MenuOptionGetResponseDto((Long)d.get(0)[7], (String)d.get(0)[8], optionDetailAllResponseDtos);
                                             }
                                     )
                             )).values().stream().collect(Collectors.toList());
-                            return new MenuAllResponseDto(
+                            return new MenuGetResponseDto(
                                     (Long)b.get(0)[0],
                                     (String)b.get(0)[1],
                                     (Integer) b.get(0)[2],
@@ -99,10 +98,56 @@ public class MenuServiceImpl implements MenuService {
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
 
         }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, resultList);
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
 
-    public ResponseDto<MenuResponseDto> updateMenu(@Valid Long id, MenuRequestDto dto) {
+    @Override
+    public ResponseDto<MenuGetResponseDto> getMenusById(Long id) {
+        MenuGetResponseDto data = null;
+        Long menuId = id;
+
+        try {
+            List<Object[]> result = menuRepository.findMenuWithCategoryAndOptionByMenuId(menuId);
+
+            List<MenuOptionGetResponseDto> optionGetResponseDtos = result.stream().collect(Collectors.groupingBy(
+                    a -> (Long) a[7],
+                    Collectors.collectingAndThen(
+                            Collectors.toList(),
+                            b -> {
+                                List<MenuOptionDetailGetResponseDto> optionDetailGetResponseDtos = b.stream()
+                                        .map(c -> new MenuOptionDetailGetResponseDto(
+                                                (Long) c[9],
+                                                (String) c[10],
+                                                (Integer) c[11]
+                                        ))
+                                        .collect(Collectors.toList());
+
+                                return new MenuOptionGetResponseDto(
+                                        (Long) b.get(0)[7],
+                                        (String) b.get(0)[8],
+                                        optionDetailGetResponseDtos
+                                );
+                            }
+                    )
+            )).values().stream().collect(Collectors.toList());
+            data = new MenuGetResponseDto(
+                    (Long) result.get(0)[0],
+                    (String) result.get(0)[1],
+                    (Integer) result.get(0)[2],
+                    (String) result.get(0)[3],
+                    (String) result.get(0)[4],
+                    (Boolean) result.get(0)[5],
+                    (String) result.get(0)[6],
+                    optionGetResponseDtos
+            );
+
+        } catch (Exception e) {
+            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
+        }
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+    }
+
+    public ResponseDto<MenuResponseDto> updateMenu(@Valid Long menuId, MenuRequestDto dto) {
         MenuResponseDto data = null;
 
         try {
@@ -112,7 +157,7 @@ public class MenuServiceImpl implements MenuService {
             }
             MenuCategory category = OptionalCategory.get();
 
-            Optional<Menu> OptionalMenu = menuRepository.findById(id);
+            Optional<Menu> OptionalMenu = menuRepository.findById(menuId);
             if (OptionalMenu.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_DATA);
             }
@@ -132,37 +177,18 @@ public class MenuServiceImpl implements MenuService {
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
 
-    public ResponseDto<Void> deleteMenu(Long id) {
+    public ResponseDto<Void> deleteMenu(Long menuId) {
         try {
-            Optional<Menu> optionalMenu = menuRepository.findById(id);
+            Optional<Menu> optionalMenu = menuRepository.findById(menuId);
             if (optionalMenu.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_DATA);
             }
-            menuRepository.deleteById(id);
+            menuRepository.deleteById(menuId);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
         }
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
-    }
-
-    @Override
-    public ResponseDto<MenuResponseDto> getMenusById(Long menuId) {
-        MenuResponseDto data = null;
-
-        try {
-            Optional<Menu> menuOptional = menuRepository.findById(menuId);
-
-            if (menuOptional.isPresent()) {
-
-                data = new MenuResponseDto(menuOptional.get());
-            } else {
-                return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_DATA);
-            }
-        } catch (Exception e) {
-            return ResponseDto.setFailed(ResponseMessage.DATABASE_ERROR);
-        }
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
     }
 }
 

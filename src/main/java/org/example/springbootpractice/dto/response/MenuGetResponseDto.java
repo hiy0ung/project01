@@ -8,7 +8,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuAllResponseDto {
+public class MenuGetResponseDto {
     private Long menuId;
     private String menuName;
     private Integer menuPrice;
@@ -16,5 +16,5 @@ public class MenuAllResponseDto {
     private String menuDescription;
     private Boolean isAvailable;
     private String menuCategory;
-    private List<MenuOptionAllResponseDto> menuOptions;
+    private List<MenuOptionGetResponseDto> menuOptions;
 }

@@ -20,28 +20,12 @@ public class MenuOptionDetailController {
     private final MenuOptionDetailService menuOptionDetailService;
 
     public static final String OPTION_DETAIL_POST_ADD = "/add";
-    public static final String OPTION_DETAIL_GET_LIST = "/";
-    public static final String OPTION_DETAIL_GET_ID = "/{id}";
     public static final String OPTION_DETAIL_PUT_ID = "/{id}";
     public static final String OPTION_DETAIL_DELETE_ID = "/{id}";
 
     @PostMapping(OPTION_DETAIL_POST_ADD)
     public ResponseEntity<ResponseDto<MenuOptionDetailResponseDto>> addOptionDetail(@RequestBody MenuOptionDetailRequestDto dto) {
         ResponseDto<MenuOptionDetailResponseDto> response = menuOptionDetailService.addOptionDetail(dto);
-        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
-        return ResponseEntity.status(status).body(response);
-    }
-
-    @GetMapping(OPTION_DETAIL_GET_LIST)
-    public ResponseEntity<ResponseDto<List<MenuOptionDetailResponseDto>>> getAllOptionDetails() {
-        ResponseDto<List<MenuOptionDetailResponseDto>> response = menuOptionDetailService.getAllOptionDetails();
-        HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
-        return ResponseEntity.status(status).body(response);
-    }
-
-    @GetMapping(OPTION_DETAIL_GET_ID)
-    public ResponseEntity<ResponseDto<MenuOptionDetailResponseDto>> getOptionDetailById(@PathVariable Long id) {
-        ResponseDto<MenuOptionDetailResponseDto> response = menuOptionDetailService.getOptionDetailById(id);
         HttpStatus status = response.isResult() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(response);
     }

@@ -17,7 +17,6 @@ public class MenuOption {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(nullable = false)
     private String optionName;
 
@@ -25,15 +24,7 @@ public class MenuOption {
     @OneToMany(mappedBy = "menuOption", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuOptionDetail> menuOptionDetails = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "menuOption", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuOptionGroup> menuOptionGroups = new ArrayList<>();
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "menu_id")
-//    private Menu menu;
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "order_detail_id", nullable = false)
-//    private OrderDetail orderDetail;
-
 }

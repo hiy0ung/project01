@@ -8,9 +8,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class MenuOptionAllResponseDto {
+public class MenuOptionGetResponseDto {
     private Long menuOptionId;
     private String optionName;
 
-    private List<MenuOptionDetailAllResponseDto> optionDetails;
+    private List<MenuOptionDetailGetResponseDto> optionDetails;
 }

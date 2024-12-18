@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.springbootpractice.common.constant.ApiMappingPattern;
 import org.example.springbootpractice.dto.request.MenuRequestDto;
-import org.example.springbootpractice.dto.response.MenuAllResponseDto;
+import org.example.springbootpractice.dto.response.MenuGetResponseDto;
 import org.example.springbootpractice.dto.response.MenuResponseDto;
 import org.example.springbootpractice.dto.response.ResponseDto;
 import org.example.springbootpractice.service.MenuService;
@@ -14,8 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 @RestController
 @RequestMapping(ApiMappingPattern.MENU)
@@ -26,8 +24,6 @@ public class MenuController {
     public static final String MENU_POST_ADD = "/add";
     public static final String MENU_GET_LIST = "/";
     public static final String MENU_GET_ID = "/{id}";
-    public static final String MENU_GET_NAME = "/{menuName}";
-    public static final String MENU_GET_CATEGORY = "/{menuCategory}";
     public static final String MENU_PUT_UPDATE = "/update/{id}";
     public static final String MENU_DELETE = "/delete/{id}";
 
@@ -41,15 +37,15 @@ public class MenuController {
 
     // 메뉴 조회
     @GetMapping(MENU_GET_LIST)
-    public ResponseEntity<ResponseDto<List<MenuAllResponseDto>>> getAllMenus(@AuthenticationPrincipal String userId) {
-        ResponseDto<List<MenuAllResponseDto>> result = menuService.getAllMenus();
+    public ResponseEntity<ResponseDto<List<MenuGetResponseDto>>> getAllMenus(@AuthenticationPrincipal String userId) {
+        ResponseDto<List<MenuGetResponseDto>> result = menuService.getAllMenus();
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     // 특정 ID 메뉴 조회
     @GetMapping(MENU_GET_ID)
-    public ResponseEntity<ResponseDto<MenuResponseDto>> getMenusById(@PathVariable Long id, @AuthenticationPrincipal String userId) {
-        ResponseDto<MenuResponseDto> result = menuService.getMenusById(id);
+    public ResponseEntity<ResponseDto<MenuGetResponseDto>> getMenusById(@PathVariable Long id, @AuthenticationPrincipal String userId) {
+        ResponseDto<MenuGetResponseDto> result = menuService.getMenusById(id);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
