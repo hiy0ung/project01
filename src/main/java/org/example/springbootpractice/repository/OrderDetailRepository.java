@@ -1,6 +1,5 @@
 package org.example.springbootpractice.repository;
 
-import org.example.springbootpractice.dto.response.OrderDetailResponseDto;
 import org.example.springbootpractice.entity.OrderDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,61 +10,63 @@ import java.util.List;
 
 @Repository
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> {
-    // OrderDetail
 
-//    @Query(
-//            value = """
-//
-//SELECT
-//    od.order_id AS orderId,
-//    m.menu_name AS orderMenuName,
-//    (m.menu_price * od.quantity +
-//        IFNULL(SUM(md.additional_fee), 0)) AS menuTotalPrice,
-//    od.quantity AS quantity
-//FROM
-//    order_details od
-//JOIN
-//    menus m ON od.menu_id = m.id
-//LEFT JOIN
-//    menu_options mo ON mo.menu_id = m.id
-//LEFT JOIN
-//    menu_option_details md ON md.option_id = mo.id
-//WHERE od.order_id = orders.id
-//GROUP BY
-//    od.id, m.menu_name, m.menu_price, od.quantity, od.order_id
-//"""
-//    , nativeQuery = true)
-@Query(
-        value = """
-        SELECT 
-            od.order_id AS orderId,
-            m.menu_name AS orderMenuName,
-            (m.menu_price * od.quantity) + 
-            IFNULL(SUM(md.additional_fee), 0) AS menuTotalPrice,  -- 메뉴 가격과 수량을 곱하고 옵션의 추가 금액을 더함
-            od.quantity AS quantity,
-            mo.id AS menuOptionId,
-            mo.option_name AS menuOptionName,
-            md.id AS menuOptionDetailId,
-            md.option_detail_name AS menuOptionDetailName,
-            md.additional_fee AS menuOptionDetailAdditionalFee
-        FROM 
-            order_details od
-        JOIN 
-            menus m ON od.menu_id = m.id
-        LEFT JOIN 
-            menu_options mo ON mo.menu_id = m.id
-        LEFT JOIN 
-            menu_option_details md ON md.option_id = mo.id
-        WHERE 
-            od.order_id = :orderId
-        GROUP BY 
-            od.order_id, m.menu_name, m.menu_price, od.quantity, mo.id, mo.option_name, 
-            md.id, md.option_detail_name, md.additional_fee
-        ORDER BY 
-            od.order_id, mo.id, md.id
-    """,
-        nativeQuery = true)
-    List<Object[]> findOrderDetailsWithOptions(@Param("orderId") Long orderId);
-
-    List<OrderDetail> findMenuOptionByOrderId(Long orderId);
+    @Query(value = """
+        with menu_quantity as (
+            select
+                o.id as order_id,
+                m.id as menu_id,
+                m.menu_name,
+                m.menu_price,
+                count(od.id) as quantity
+            from
+                orders o
+            left outer join order_details od on od.order_id = o.id
+            left outer join menus m on m.id = od.menu_id
+            group by
+                o.id,
+                m.id,
+                m.menu_name,
+                m.menu_price
+        )
+        select
+            o.id as order_id,
+            od.id as order_detail_id,
+            o.delivery_address,
+            o.order_date,
+            mq.menu_name,
+            mq.menu_price,
+            mq.quantity,
+            mo.option_name as menu_option_name,
+            md.option_detail_name as menu_option_detail_name,
+            md.additional_fee
+        from
+            orders o
+        left outer join 
+            menu_quantity mq on mq.order_id = o.id
+        left outer join
+            order_details od on od.order_id = o.id and od.menu_id = mq.menu_id
+        left outer join
+            order_menu_option omo on omo.order_detail_id = od.id
+        left outer join
+            menu_option_details md on md.id = omo.menu_option_detail_id
+        left outer join
+            menu_options mo on mo.id = md.menu_option_id
+        where
+            o.id = :orderId
+        group by
+            o.id,
+            od.id,
+            o.delivery_address,
+            o.order_date,
+            mq.menu_name,
+            mq.menu_price,
+            mq.quantity,
+            mo.option_name,
+            md.option_detail_name,
+            md.additional_fee
+        order by
+            o.id, od.id;
+""", nativeQuery = true)
+        List<Object[]> findOrderDetailsWithOptions(@Param("orderId") Long id);
 }

@@ -6,5 +6,5 @@ import org.example.springbootpractice.dto.response.ResponseDto;
 import java.util.List;
 
 public interface OrderDetailService {
-    ResponseDto<List<OrderDetailResponseDto>> getOrderDetail(Long orderId);
+    ResponseDto<List<OrderDetailResponseDto>> getOrderDetail(Long id);
 }

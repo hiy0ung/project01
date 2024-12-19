@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class MenuOptionDetailGetResponseDto {
     private Long detailId;
     private String optionDetailName;
-    private Integer addtionalFee;
+    private Integer additionalFee;
 }

@@ -1,31 +1,56 @@
 package org.example.springbootpractice.entity;
 
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "stores")
+@Data
+@Builder(toBuilder = true)
 @NoArgsConstructor
+@AllArgsConstructor
 public class Store {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String name; // 가게 이름 필드
+    @JoinColumn(name = "owner_id", nullable = false)
+    @OneToOne
+    private User user;
 
-    @Column(length = 255)
-    private String address; // 가게 주소 필드
+    @Column(nullable = false)
+    private String storeName;
+
+    @Column(nullable = false)
+    private String logoUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
+
+    @Column(nullable = false)
+    private LocalTime openingTime;
+
+    @Column(nullable = false)
+    private LocalTime closingTime;
+
+    @Column(length = 200)
+    private LocalTime breakStartTime;
+
+    @Column(length = 200)
+    private LocalTime breakEndTime;
+
+    @Column(length = 500)
+    private String address;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Menu> menus = new ArrayList<>();
-
-    public Store(String name, String address) {
-        this.name = name;
-        this.address = address;
-    }
 }
+

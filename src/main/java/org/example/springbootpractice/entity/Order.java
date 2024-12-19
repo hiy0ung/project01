@@ -19,8 +19,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="store_id", nullable = false)
-    @ManyToOne
     private Store store;
 
     @Column(nullable = false, length = 255)
