@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.springbootpractice.entity.Menu;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class MenuRequestDto {
     private Long storeId;
     private Long categoryId;

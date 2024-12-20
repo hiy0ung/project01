@@ -7,8 +7,10 @@ import org.example.springbootpractice.dto.request.MenuRequestDto;
 import org.example.springbootpractice.dto.response.*;
 import org.example.springbootpractice.entity.Menu;
 import org.example.springbootpractice.entity.MenuCategory;
+import org.example.springbootpractice.entity.Store;
 import org.example.springbootpractice.repository.MenuCategoryRepository;
 import org.example.springbootpractice.repository.MenuRepository;
+import org.example.springbootpractice.repository.StoreRepository;
 import org.example.springbootpractice.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,9 @@ public class MenuServiceImpl implements MenuService {
     @Autowired
     private final MenuCategoryRepository menuCategoryRepository;
 
+    @Autowired
+    private final StoreRepository storeRepository;
+
     public ResponseDto<MenuResponseDto> addMenu(@Valid MenuRequestDto dto) {
         MenuResponseDto data = null;
 
@@ -34,6 +39,7 @@ public class MenuServiceImpl implements MenuService {
             if (OptionalCategory.isEmpty()) {
                 return ResponseDto.setFailed(ResponseMessage.NOT_EXIST_DATA);
             }
+            Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new RuntimeException("오류"));
 
             MenuCategory category = OptionalCategory.get();
             Menu menu = Menu.builder()
@@ -45,6 +51,7 @@ public class MenuServiceImpl implements MenuService {
                     .menuCategory(category)
                     .build();
 
+            menu.setStore(store);
             Menu savedMenu = menuRepository.save(menu);
             MenuResponseDto responseDto = new MenuResponseDto(savedMenu);
             data = responseDto;
